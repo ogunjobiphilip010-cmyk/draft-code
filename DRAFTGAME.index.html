@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nigeria Draft Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #008751 0%, #FFFFFF 50%, #008751 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #008751;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 1.2rem;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .player-info {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .player {
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .player-1 {
+            background-color: #008751;
+            color: white;
+        }
+        
+        .player-2 {
+            background-color: #E6BE8A;
+            color: #333;
+        }
+        
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .draft-table {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .draft-table h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #008751;
+            border-bottom: 2px solid #008751;
+            padding-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #008751;
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .selectable {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .selectable:hover {
+            background-color: #e0f7e9;
+        }
+        
+        .selected {
+            background-color: #008751;
+            color: white;
+        }
+        
+        .player-1-selected {
+            background-color: #008751;
+            color: white;
+        }
+        
+        .player-2-selected {
+            background-color: #E6BE8A;
+            color: #333;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background-color: #008751;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0 10px;
+        }
+        
+        button:hover {
+            background-color: #006b41;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+        
+        .score-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            width: 45%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .score-card h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #008751;
+            border-bottom: 2px solid #008751;
+            padding-bottom: 10px;
+        }
+        
+        .score-list {
+            list-style-type: none;
+        }
+        
+        .score-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .current-player {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .game-message {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #008751;
+            min-height: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .score-board {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .score-card {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nigeria Draft Game</h1>
+            <p class="subtitle">Select Nigerian states, cities, and landmarks to build your collection!</p>
+        </header>
+        
+        <div class="game-info">
+            <div class="player-info">
+                <div class="player player-1 current-player">Player 1</div>
+                <div class="player player-2">Player 2</div>
+            </div>
+            <div class="turn-counter">Turn: <span id="turn-number">1</span></div>
+        </div>
+        
+        <div class="game-message" id="game-message">Player 1's turn to select</div>
+        
+        <div class="game-area">
+            <div class="draft-table">
+                <h2>Nigerian States</h2>
+                <table id="states-table">
+                    <thead>
+                        <tr>
+                            <th>State</th>
+                            <th>Capital</th>
+                            <th>Region</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selectable" data-id="1">
+                            <td>Lagos</td>
+                            <td>Ikeja</td>
+                            <td>South-West</td>
+                        </tr>
+                        <tr class="selectable" data-id="2">
+                            <td>Kano</td>
+                            <td>Kano</td>
+                            <td>North-West</td>
+                        </tr>
+                        <tr class="selectable" data-id="3">
+                            <td>Rivers</td>
+                            <td>Port Harcourt</td>
+                            <td>South-South</td>
+                        </tr>
+                        <tr class="selectable" data-id="4">
+                            <td>Oyo</td>
+                            <td>Ibadan</td>
+                            <td>South-West</td>
+                        </tr>
+                        <tr class="selectable" data-id="5">
+                            <td>Kaduna</td>
+                            <td>Kaduna</td>
+                            <td>North-West</td>
+                        </tr>
+                        <tr class="selectable" data-id="6">
+                            <td>Edo</td>
+                            <td>Benin City</td>
+                            <td>South-South</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="draft-table">
+                <h2>Nigerian Landmarks</h2>
+                <table id="landmarks-table">
+                    <thead>
+                        <tr>
+                            <th>Landmark</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="selectable" data-id="7">
+                            <td>Zuma Rock</td>
+                            <td>Niger State</td>
+                            <td>Natural</td>
+                        </tr>
+                        <tr class="selectable" data-id="8">
+                            <td>National Theatre</td>
+                            <td>Lagos</td>
+                            <td>Cultural</td>
+                        </tr>
+                        <tr class="selectable" data-id="9">
+                            <td>Yankari Game Reserve</td>
+                            <td>Bauchi State</td>
+                            <td>Wildlife</td>
+                        </tr>
+                        <tr class="selectable" data-id="10">
+                            <td>Obudu Mountain Resort</td>
+                            <td>Cross River</td>
+                            <td>Resort</td>
+                        </tr>
+                        <tr class="selectable" data-id="11">
+                            <td>Third Mainland Bridge</td>
+                            <td>Lagos</td>
+                            <td>Infrastructure</td>
+                        </tr>
+                        <tr class="selectable" data-id="12">
+                            <td>Osun-Osogbo Grove</td>
+                            <td>Osun State</td>
+                            <td>Cultural</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="reset-btn">Reset Game</button>
+            <button id="end-turn-btn" disabled>End Turn</button>
+        </div>
+        
+        <div class="score-board">
+            <div class="score-card">
+                <h3>Player 1 Collection</h3>
+                <ul class="score-list" id="player1-list">
+                    <!-- Player 1 selections will appear here -->
+                </ul>
+                <p>Total: <span id="player1-score">0</span> points</p>
+            </div>
+            
+            <div class="score-card">
+                <h3>Player 2 Collection</h3>
+                <ul class="score-list" id="player2-list">
+                    <!-- Player 2 selections will appear here -->
+                </ul>
+                <p>Total: <span id="player2-score">0</span> points</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game state
+            const gameState = {
+                currentPlayer: 1,
+                turn: 1,
+                maxTurns: 6,
+                player1Selections: [],
+                player2Selections: [],
+                selectedItem: null
+            };
+            
+            // DOM elements
+            const statesTable = document.getElementById('states-table');
+            const landmarksTable = document.getElementById('landmarks-table');
+            const player1List = document.getElementById('player1-list');
+            const player2List = document.getElementById('player2-list');
+            const player1Score = document.getElementById('player1-score');
+            const player2Score = document.getElementById('player2-score');
+            const turnNumber = document.getElementById('turn-number');
+            const gameMessage = document.getElementById('game-message');
+            const resetBtn = document.getElementById('reset-btn');
+            const endTurnBtn = document.getElementById('end-turn-btn');
+            const player1Element = document.querySelector('.player-1');
+            const player2Element = document.querySelector('.player-2');
+            
+            // Nigeria data
+            const nigeriaData = [
+                { id: 1, name: "Lagos", type: "state", capital: "Ikeja", region: "South-West", points: 5 },
+                { id: 2, name: "Kano", type: "state", capital: "Kano", region: "North-West", points: 4 },
+                { id: 3, name: "Rivers", type: "state", capital: "Port Harcourt", region: "South-South", points: 4 },
+                { id: 4, name: "Oyo", type: "state", capital: "Ibadan", region: "South-West", points: 3 },
+                { id: 5, name: "Kaduna", type: "state", capital: "Kaduna", region: "North-West", points: 3 },
+                { id: 6, name: "Edo", type: "state", capital: "Benin City", region: "South-South", points: 3 },
+                { id: 7, name: "Zuma Rock", type: "landmark", location: "Niger State", landmarkType: "Natural", points: 4 },
+                { id: 8, name: "National Theatre", type: "landmark", location: "Lagos", landmarkType: "Cultural", points: 3 },
+                { id: 9, name: "Yankari Game Reserve", type: "landmark", location: "Bauchi State", landmarkType: "Wildlife", points: 5 },
+                { id: 10, name: "Obudu Mountain Resort", type: "landmark", location: "Cross River", landmarkType: "Resort", points: 4 },
+                { id: 11, name: "Third Mainland Bridge", type: "landmark", location: "Lagos", landmarkType: "Infrastructure", points: 3 },
+                { id: 12, name: "Osun-Osogbo Grove", type: "landmark", location: "Osun State", landmarkType: "Cultural", points: 4 }
+            ];
+            
+            // Initialize game
+            function initGame() {
+                // Reset game state
+                gameState.currentPlayer = 1;
+                gameState.turn = 1;
+                gameState.player1Selections = [];
+                gameState.player2Selections = [];
+                gameState.selectedItem = null;
+                
+                // Reset UI
+                updateUI();
+                
+                // Clear selections
+                const selectableItems = document.querySelectorAll('.selectable');
+                selectableItems.forEach(item => {
+                    item.classList.remove('player-1-selected', 'player-2-selected');
+                });
+                
+                // Update game message
+                gameMessage.textContent = `Player ${gameState.currentPlayer}'s turn to select`;
+                
+                // Enable/disable buttons
+                endTurnBtn.disabled = true;
+            }
+            
+            // Update UI based on game state
+            function updateUI() {
+                // Update turn counter
+                turnNumber.textContent = gameState.turn;
+                
+                // Update player highlights
+                if (gameState.currentPlayer === 1) {
+                    player1Element.classList.add('current-player');
+                    player2Element.classList.remove('current-player');
+                } else {
+                    player1Element.classList.remove('current-player');
+                    player2Element.classList.add('current-player');
+                }
+                
+                // Update player lists and scores
+                updatePlayerList(player1List, gameState.player1Selections);
+                updatePlayerList(player2List, gameState.player2Selections);
+                
+                // Calculate and display scores
+                const player1Total = calculateScore(gameState.player1Selections);
+                const player2Total = calculateScore(gameState.player2Selections);
+                player1Score.textContent = player1Total;
+                player2Score.textContent = player2Total;
+                
+                // Check for game end
+                if (gameState.turn > gameState.maxTurns) {
+                    endGame();
+                }
+            }
+            
+            // Update a player's selection list
+            function updatePlayerList(listElement, selections) {
+                listElement.innerHTML = '';
+                selections.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.name} (${item.points} points)`;
+                    listElement.appendChild(li);
+                });
+            }
+            
+            // Calculate player score
+            function calculateScore(selections) {
+                return selections.reduce((total, item) => total + item.points, 0);
+            }
+            
+            // Handle item selection
+            function handleItemSelection(event) {
+                const row = event.target.closest('tr');
+                if (!row || !row.classList.contains('selectable')) return;
+                
+                // If an item is already selected, deselect it
+                if (gameState.selectedItem) {
+                    const previouslySelected = document.querySelector(`[data-id="${gameState.selectedItem.id}"]`);
+                    if (previouslySelected) {
+                        previouslySelected.classList.remove('selected');
+                    }
+                }
+                
+                // Select new item
+                gameState.selectedItem = nigeriaData.find(item => item.id === parseInt(row.dataset.id));
+                row.classList.add('selected');
+                
+                // Enable end turn button
+                endTurnBtn.disabled = false;
+            }
+            
+            // Handle end turn
+            function handleEndTurn() {
+                if (!gameState.selectedItem) return;
+                
+                // Add selection to current player's collection
+                if (gameState.currentPlayer === 1) {
+                    gameState.player1Selections.push(gameState.selectedItem);
+                } else {
+                    gameState.player2Selections.push(gameState.selectedItem);
+                }
+                
+                // Mark item as selected by current player
+                const selectedRow = document.querySelector(`[data-id="${gameState.selectedItem.id}"]`);
+                selectedRow.classList.remove('selectable', 'selected');
+                selectedRow.classList.add(gameState.currentPlayer === 1 ? 'player-1-selected' : 'player-2-selected');
+                
+                // Reset selection
+                gameState.selectedItem = null;
+                
+                // Switch players or advance turn
+                if (gameState.currentPlayer === 1) {
+                    gameState.currentPlayer = 2;
+                    gameMessage.textContent = "Player 2's turn to select";
+                } else {
+                    gameState.currentPlayer = 1;
+                    gameState.turn++;
+                    gameMessage.textContent = `Turn ${gameState.turn}: Player 1's turn to select`;
+                }
+                
+                // Disable end turn button until new selection is made
+                endTurnBtn.disabled = true;
+                
+                // Update UI
+                updateUI();
+            }
+            
+            // End game and determine winner
+            function endGame() {
+                const player1Total = calculateScore(gameState.player1Selections);
+                const player2Total = calculateScore(gameState.player2Selections);
+                
+                if (player1Total > player2Total) {
+                    gameMessage.textContent = "Game Over! Player 1 wins!";
+                } else if (player2Total > player1Total) {
+                    gameMessage.textContent = "Game Over! Player 2 wins!";
+                } else {
+                    gameMessage.textContent = "Game Over! It's a tie!";
+                }
+                
+                // Disable further selections
+                const selectableItems = document.querySelectorAll('.selectable');
+                selectableItems.forEach(item => {
+                    item.classList.remove('selectable');
+                });
+                
+                endTurnBtn.disabled = true;
+            }
+            
+            // Event listeners
+            statesTable.addEventListener('click', handleItemSelection);
+            landmarksTable.addEventListener('click', handleItemSelection);
+            endTurnBtn.addEventListener('click', handleEndTurn);
+            resetBtn.addEventListener('click', initGame);
+            
+            // Initialize the game
+            initGame();
+        });
+    </script>
+</body>
+</html>
